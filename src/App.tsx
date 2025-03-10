@@ -1,18 +1,22 @@
-import { useState } from 'react'
-import { Container } from '@mui/material';
+import { useState } from "react";
+import { Container } from "@mui/material";
 
 // Components
-import ContactForm from '@/components/ContactForm';
+import ContactCard from "@/components/ContactCard";
+import ContactForm from "@/components/ContactForm";
+
+import { useStore } from "@/store";
 
 function App() {
-  const [count, setCount] = useState(0)
-
+  const { contacts } = useStore((state) => state);
   return (
     <Container>
-          <ContactForm />
+      {contacts.map((contact) => (
+        <ContactCard key={contact.id} contact={contact} />
+      ))}
+      <ContactForm />
     </Container>
-
-  )
+  );
 }
 
-export default App
+export default App;

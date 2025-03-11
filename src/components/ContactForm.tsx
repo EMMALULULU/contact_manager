@@ -9,12 +9,13 @@ import { MuiChipsInput } from "mui-chips-input";
 import { contactSchema, Contact, ContactFormError } from "@/schema/Contact";
 
 // Store
-import { useStore } from '@/store'
+import { useStore } from "@/store";
 
 export default function ContactForm() {
   const initialContact = {
     firstName: "",
     lastName: "",
+    isSelected: false,
     phones: 10000000,
     emails: "",
     address: "",
@@ -27,7 +28,7 @@ export default function ContactForm() {
 
   const initialFormError = { formErrors: [], fieldErrors: {} };
 
-  const addContact = useStore(state => state.addContact)
+  const addContact = useStore((state) => state.addContact);
 
   const [formError, setFormError] = useState<ContactFormError>({
     ...initialFormError,
@@ -63,11 +64,11 @@ export default function ContactForm() {
       return setFormError(error.flatten());
     }
     addContact(data);
-    resetForm()
+    resetForm();
   };
 
   return (
-    <Paper sx={{ my: 2 }} elevation={3}>
+    <Paper elevation={3}>
       <Box sx={{ p: 2 }} component="form">
         <Typography variant="h4" textAlign="center">
           Create Contact

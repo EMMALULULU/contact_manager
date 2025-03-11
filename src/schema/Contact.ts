@@ -12,6 +12,7 @@ export const contactSchema = z.object({
   websiteURL: z.string().url(),
   notes: z.string().max(200).min(1),
   tags: z.array(z.string()).min(1),
+  isSelected: z.boolean(),
 });
 
 export type Contact = z.infer<typeof contactSchema>;

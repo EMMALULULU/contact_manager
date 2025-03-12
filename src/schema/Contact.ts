@@ -1,20 +1,50 @@
-import { z } from 'zod';
+import { ContactProperty } from '@/components/types';
+import { z, ZodRawShape } from 'zod';
 
-export const contactSchema = z.object({
-  id: z.string().uuid(),
-  firstName: z.string().min(1),
-  lastName: z.string().min(1),
-  phones: z.number().min(10000000).max(99999999),
-  address: z.string().min(1),
-  emails: z.string().email().min(1),
-  categories: z.string().min(1),
-  organizationName: z.string().min(1),
-  websiteURL: z.string().url(),
-  notes: z.string().max(200).min(1),
-  tags: z.array(z.string()).min(1),
-  isSelected: z.boolean(),
-});
+export type ContactFormData = z.infer<ReturnType<typeof generateContactFormSchema>>;
 
-export type Contact = z.infer<typeof contactSchema>;
+export type ContactFormError = z.inferFlattenedErrors<
+  ReturnType<typeof generateContactFormSchema>
+>;
 
-export type ContactFormError = z.inferFlattenedErrors<typeof contactSchema>;
+function getContactPropertySchema(property: ContactProperty) {
+  switch (property.type) {
+    case 'email':
+      return property.isRequired
+        ? z.string().email()
+        : z.string().email().optional();
+    case 'multiLineString':
+      return property.isRequired
+        ? z.string().max(200)
+        : z.string().max(200).optional();
+    case 'phoneNumber':
+      return property.isRequired
+        ? z.number().min(10000000).max(99999999)
+        : z.number().min(10000000).max(99999999).optional();
+    case 'singleLineString':
+      return property.isRequired ? z.string() : z.string().optional();
+    case 'tag':
+      return property.isRequired
+        ? z.array(z.string()).min(1, {
+            message: 'At least one tag is required',
+          })
+        : z.array(z.string()).optional();
+    case 'url':
+      return property.isRequired
+        ? z.string().url()
+        : z.string().url().optional();
+    default:
+      return z.unknown();
+  }
+}
+
+export function generateContactFormSchema(properties: ContactProperty[]) {
+  const shape: ZodRawShape = {};
+
+  properties.forEach((property) => {
+    const propertySchema = getContactPropertySchema(property);
+    shape[property.id] = propertySchema;
+  });
+
+  return z.object(shape);
+}

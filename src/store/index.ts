@@ -1,64 +1,64 @@
 import { create } from 'zustand';
 import { immer } from 'zustand/middleware/immer';
-
-// Types
-import { Contact, contactSchema } from '@/schema/Contact';
-
+import { generateContactFormSchema } from '@/schema/Contact';
+import { contactProperties } from '@/constant/contactProperties';
+import { Contact } from '@/components/types';
 
 type State = {
-    searchKeyword: string;
-    selectedTags: string[];
-    contacts: Contact[];
-}
+  contacts: Contact[];
+  selectedContacts: Contact[];
+};
 
 type Actions = {
-    addContact: (contact: Contact) => void;
-    deleteContact: (id: string) => void;
-    onSelectContactCheckbox: (id: string) => void;
-    setSearchKey: (keyword: string) => void;
-    setSelectedTags: (selectedTags: string[]) => void;
-    // addCustomer: (customer: Customer) => void;
-}
+  addContact: (contact: Contact) => void;
+  deleteContact: (id: string) => void;
+
+  updateContact: (contact: Contact) => void;
+  setSelectedContacts: (contacts: Contact[]) => void;
+};
 
 const getContact = () => {
-    const contactStr = localStorage.getItem("contacts");
-    if (contactStr) {
-        const savedRecords: Contact[] = JSON.parse(contactStr);
-        const isValid = Array.isArray(savedRecords) && savedRecords.every(record => contactSchema.safeParse(record).success === true);
-        if (isValid) {
-            return savedRecords;
-        }
+  const contactStr = localStorage.getItem('contacts');
+  if (contactStr) {
+    const savedRecords: Contact[] = JSON.parse(contactStr);
+    console.log('contactStr', savedRecords);
+    const isValid =
+      Array.isArray(savedRecords) &&
+      savedRecords.every(
+        (record) =>
+          generateContactFormSchema(contactProperties).safeParse(record)
+            .success === true
+      );
+    if (isValid) {
+      return savedRecords;
     }
-    return []
-}
+  }
+  return [];
+};
 
 export const useStore = create<State & Actions>()(
-    immer((set) => ({
-        searchKeyword: "",
-        selectedTags: [],
-        contacts: getContact(),
-        addContact: (contact) => set((state) => {
-            state.contacts.push(contact);
-            localStorage.setItem('contacts', JSON.stringify(state.contacts))
-        }),
-        deleteContact: (id) => set((state) => {
-            state.contacts = state.contacts.filter((contact) => contact.id !== id);
-            localStorage.setItem('contacts', JSON.stringify(state.contacts))
-        }),
-        onSelectContactCheckbox: (id) => set((state) => {
-            state.contacts = state.contacts.map((contact) => {
-                const isSelectedThisContact = contact.id === id
-                return {
-                    ...contact,
-                    isSelected: isSelectedThisContact ? !contact.isSelected : contact.isSelected
-                };
-            });
-        }),
-        setSearchKey: (keyword) => set((state) => {
-            state.searchKeyword = keyword;
-        }),
-        setSelectedTags: (selectedTags) => set((state) => {
-            state.selectedTags = selectedTags;
-        }),
-    }))
-)
+  immer((set) => ({
+    selectedContacts: [],
+    contacts: getContact(),
+    addContact: (contact) =>
+      set((state) => {
+        const newContact = contact;
+        state.contacts.push(newContact);
+        localStorage.setItem('contacts', JSON.stringify(state.contacts));
+      }),
+    deleteContact: (id) =>
+      set((state) => {
+        state.contacts = state.contacts.filter((contact) => contact.id !== id);
+        localStorage.setItem('contacts', JSON.stringify(state.contacts));
+      }),
+    updateContact: (contact) =>
+      set((state) => {
+        console.log('inside store', contact);
+        state.contacts = state.contacts.map((c) =>
+          c.id === contact.id ? contact : c
+        );
+        localStorage.setItem('contacts', JSON.stringify(state.contacts));
+      }),
+    setSelectedContacts: (contacts) => set({ selectedContacts: contacts }),
+  }))
+);

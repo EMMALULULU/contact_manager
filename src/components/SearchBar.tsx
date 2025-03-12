@@ -1,35 +1,47 @@
-import { useState } from 'react'
 import Paper from '@mui/material/Paper';
 import InputBase from '@mui/material/InputBase';
 import IconButton from '@mui/material/IconButton';
 import SearchIcon from '@mui/icons-material/Search';
+import { useSearchParams } from 'react-router-dom';
+import { useState } from 'react';
+import CloseIcon from '@mui/icons-material/Close';
+import { SxProps, Theme } from '@mui/material';
 
-interface SearchBarProps {
-  onSearchClicked: (searchKey: string) => void;
-}
+export default function SearchBar({ sx }: { sx?: SxProps<Theme> }) {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [query, setQuery] = useState(searchParams.get('query') ?? '');
 
-const SearchBar: React.FC<SearchBarProps> = ({
-  onSearchClicked
-}) => {
-  const [searchKey, setSearchKey] = useState("");
-  
   return (
-    <Paper
-      component="form"
-      sx={{ p: '2px 4px', display: 'flex', alignItems: 'center'  }}
-    >
+    <Paper sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', ...sx }}>
       <InputBase
         sx={{ ml: 1, flex: 1 }}
+        value={query}
         placeholder="Search Contacts"
-        value={searchKey}
-        onChange={(event) => setSearchKey(event.target.value)}
+        onChange={(event) => {
+          setQuery(event.target.value);
+        }}
+        endAdornment={
+          query.length > 0 && (
+            <IconButton
+              onClick={() => {
+                setQuery('');
+                searchParams.delete('query');
+                setSearchParams(searchParams);
+              }}
+            >
+              <CloseIcon />
+            </IconButton>
+          )
+        }
       />
-      <IconButton onClick={() => onSearchClicked(searchKey)} type="button" sx={{ p: '10px' }} aria-label="search">
+      <IconButton
+        onClick={() => {
+          setSearchParams({ query });
+        }}
+        sx={{ p: '10px' }}
+      >
         <SearchIcon />
       </IconButton>
     </Paper>
   );
 }
-
-
-export default SearchBar;

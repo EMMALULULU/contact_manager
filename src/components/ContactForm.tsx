@@ -1,239 +1,169 @@
-import { v4 as uuid } from "uuid";
-import { useState } from "react";
+import { Controller, FormProvider, useForm } from 'react-hook-form';
+import { v4 as uuid } from 'uuid';
+import { Box, Paper, TextField, Button, Stack } from '@mui/material';
+import { MuiChipsInput } from 'mui-chips-input';
+import { ContactFormData, generateContactFormSchema } from '@/schema/Contact';
+import DeleteIcon from '@mui/icons-material/Delete';
 
-// components
-import { Box, Paper, Typography, TextField, Button } from "@mui/material";
-import { MuiChipsInput } from "mui-chips-input";
+import { Contact, ContactProperty } from './types';
+import { contactProperties } from '@/constant/contactProperties';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useStore } from '@/store';
 
-// Types
-import { contactSchema, Contact, ContactFormError } from "@/schema/Contact";
-
-// Store
-import { useStore } from "@/store";
-
-export default function ContactForm() {
-  const initialContact = {
-    firstName: "",
-    lastName: "",
-    isSelected: false,
-    phones: 10000000,
-    emails: "",
-    address: "",
-    categories: "",
-    organizationName: "",
-    websiteURL: "",
-    notes: "",
-    tags: [],
-  };
-
-  const initialFormError = { formErrors: [], fieldErrors: {} };
-
-  const addContact = useStore((state) => state.addContact);
-
-  const [formError, setFormError] = useState<ContactFormError>({
-    ...initialFormError,
+const initialContact = {
+  firstName: '',
+  lastName: '',
+  phone: 10000000,
+  emails: '',
+  address: '',
+  categories: '',
+  organizationName: '',
+  websiteURL: '',
+  notes: '',
+  tags: [],
+};
+export default function ContactForm({
+  onSubmit,
+  contact,
+}: {
+  onSubmit?: (contact: Contact) => void;
+  contact?: Contact;
+}) {
+  const methods = useForm<ContactFormData>({
+    defaultValues: contact ?? initialContact,
+    resolver: zodResolver(generateContactFormSchema(contactProperties)),
   });
-  const [contact, setContact] = useState<Contact>({
-    id: uuid(),
-    ...initialContact,
-  });
-
-  const onInputChange = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value } = event.target;
-    setContact((prevState) => ({ ...prevState, [name]: value }));
-  };
-
-  const onTagsChange = (tags: string[]) => {
-    setContact((prevState) => ({ ...prevState, tags }));
-  };
-
-  const resetForm = () => {
-    setContact({
-      id: uuid(),
-      ...initialContact,
-    });
-  };
-
-  const onSubmit = () => {
-    setFormError({ ...formError });
-    const { data, success, error } = contactSchema.safeParse(contact);
-    if (!success) {
-      console.log("error  >>>>>>>>>>>> ", error.flatten().fieldErrors);
-      return setFormError(error.flatten());
-    }
-    addContact(data);
-    resetForm();
-  };
+  const { deleteContact } = useStore((state) => state);
 
   return (
     <Paper elevation={3}>
-      <Box sx={{ p: 2 }} component="form">
-        <Typography variant="h4" textAlign="center">
-          Create Contact
-        </Typography>
-        <TextField
-          name="firstName"
-          label="FirstName"
-          value={contact.firstName}
-          error={Array.isArray(formError.fieldErrors.firstName)}
-          helperText={
-            Array.isArray(formError.fieldErrors.firstName)
-              ? formError.fieldErrors.firstName[0]
-              : ""
-          }
-          onChange={onInputChange}
-          variant="outlined"
-          sx={{ my: 1 }}
-          fullWidth
-        />
-        <TextField
-          name="lastName"
-          label="LastName"
-          variant="outlined"
-          value={contact.lastName}
-          error={Array.isArray(formError.fieldErrors.lastName)}
-          helperText={
-            Array.isArray(formError.fieldErrors.lastName)
-              ? formError.fieldErrors.lastName[0]
-              : ""
-          }
-          onChange={onInputChange}
-          sx={{ my: 1 }}
-          fullWidth
-        />
-        <TextField
-          name="phones"
-          label="Phones"
-          value={contact.phones}
-          error={Array.isArray(formError.fieldErrors.phones)}
-          helperText={
-            Array.isArray(formError.fieldErrors.phones)
-              ? formError.fieldErrors.phones[0]
-              : ""
-          }
-          onChange={onInputChange}
-          variant="outlined"
-          sx={{ my: 1 }}
-          fullWidth
-        />
-        <TextField
-          name="emails"
-          label="Emails"
-          value={contact.emails}
-          error={Array.isArray(formError.fieldErrors.emails)}
-          helperText={
-            Array.isArray(formError.fieldErrors.emails)
-              ? formError.fieldErrors.emails[0]
-              : ""
-          }
-          onChange={onInputChange}
-          variant="outlined"
-          sx={{ my: 1 }}
-          fullWidth
-        />
-        <TextField
-          name="address"
-          label="Address"
-          value={contact.address}
-          error={Array.isArray(formError.fieldErrors.address)}
-          helperText={
-            Array.isArray(formError.fieldErrors.address)
-              ? formError.fieldErrors.address[0]
-              : ""
-          }
-          onChange={onInputChange}
-          variant="outlined"
-          sx={{ my: 1 }}
-          fullWidth
-        />
-        <TextField
-          name="categories"
-          label="Categories"
-          variant="outlined"
-          error={Array.isArray(formError.fieldErrors.categories)}
-          helperText={
-            Array.isArray(formError.fieldErrors.categories)
-              ? formError.fieldErrors.categories[0]
-              : ""
-          }
-          value={contact.categories}
-          onChange={onInputChange}
-          sx={{ my: 1 }}
-          fullWidth
-        />
-        <TextField
-          name="organizationName"
-          label="OrganizationName"
-          variant="outlined"
-          value={contact.organizationName}
-          error={Array.isArray(formError.fieldErrors.organizationName)}
-          helperText={
-            Array.isArray(formError.fieldErrors.organizationName)
-              ? formError.fieldErrors.organizationName[0]
-              : ""
-          }
-          onChange={onInputChange}
-          sx={{ my: 1 }}
-          fullWidth
-        />
-        <TextField
-          name="websiteURL"
-          label="WebsiteURL"
-          variant="outlined"
-          value={contact.websiteURL}
-          error={Array.isArray(formError.fieldErrors.websiteURL)}
-          helperText={
-            Array.isArray(formError.fieldErrors.websiteURL)
-              ? formError.fieldErrors.websiteURL[0]
-              : ""
-          }
-          onChange={onInputChange}
-          sx={{ my: 1 }}
-          fullWidth
-        />
-        <TextField
-          name="notes"
-          label="Notes"
-          variant="outlined"
-          onChange={onInputChange}
-          error={Array.isArray(formError.fieldErrors.notes)}
-          helperText={
-            Array.isArray(formError.fieldErrors.notes)
-              ? formError.fieldErrors.notes[0]
-              : ""
-          }
-          sx={{ my: 1 }}
-          fullWidth
-        />
+      <FormProvider {...methods}>
+        <Box sx={{ p: 2 }} component="form">
+          {contactProperties.map((property) => {
+            return getContactPropertyInput(property);
+          })}
 
-        <MuiChipsInput
-          label="Tags"
-          value={contact.tags}
-          error={Array.isArray(formError.fieldErrors.tags)}
-          helperText={
-            Array.isArray(formError.fieldErrors.tags)
-              ? formError.fieldErrors.tags[0]
-              : ""
-          }
-          fullWidth
-          onChange={onTagsChange}
-        />
-
-        <Box
-          display="flex"
-          flexDirection="row"
-          justifyContent="center"
-          gap={1}
-          sx={{ my: 1 }}
-        >
-          <Button onClick={resetForm}>Clear</Button>
-          <Button variant="contained" onClick={onSubmit}>
-            Submit
-          </Button>
+          <Stack
+            direction="row"
+            justifyContent="flex-end"
+            sx={{ my: 3, width: '100%' }}
+            spacing={2}
+          >
+            {contact?.id && (
+              <Button
+                variant="outlined"
+                onClick={() => deleteContact(contact?.id ?? '')}
+              >
+                Delete
+                <DeleteIcon />
+              </Button>
+            )}
+            <Button
+              variant="contained"
+              onClick={methods.handleSubmit((data) => {
+                onSubmit?.({ ...data, id: contact?.id ?? uuid() });
+              })}
+            >
+              Submit
+            </Button>
+          </Stack>
         </Box>
-      </Box>
+      </FormProvider>
     </Paper>
   );
+}
+
+function getContactPropertyInput(property: ContactProperty) {
+  switch (property.type) {
+    case 'email':
+    case 'singleLineString':
+    case 'url':
+      return (
+        <Controller
+          key={property.id}
+          render={({ field: { value, onChange }, fieldState: { error } }) => {
+            return (
+              <TextField
+                label={property.name}
+                value={value}
+                error={!!error}
+                helperText={error?.message}
+                onChange={onChange}
+                variant="outlined"
+                sx={{ my: 1 }}
+                fullWidth
+              />
+            );
+          }}
+          name={property.id}
+        />
+      );
+    case 'multiLineString':
+      return (
+        <Controller
+          key={property.id}
+          render={({ field: { value, onChange }, fieldState: { error } }) => {
+            return (
+              <TextField
+                multiline
+                value={value}
+                name={property.name}
+                label={property.name}
+                variant="outlined"
+                onChange={onChange}
+                error={!!error}
+                rows={3}
+                helperText={error?.message}
+                sx={{ my: 1 }}
+                fullWidth
+              />
+            );
+          }}
+          name={property.id}
+        />
+      );
+    case 'phoneNumber':
+      return (
+        <Controller
+          key={property.id}
+          render={({ field: { value, onChange }, fieldState: { error } }) => {
+            return (
+              // TODO: phone number input
+              <TextField
+                multiline
+                value={value}
+                name={property.name}
+                label={property.name}
+                variant="outlined"
+                onChange={onChange}
+                error={!!error}
+                helperText={error?.message}
+                sx={{ my: 1 }}
+                fullWidth
+              />
+            );
+          }}
+          name={property.id}
+        />
+      );
+    case 'tag':
+      return (
+        <Controller
+          key={property.id}
+          render={({ field: { value, onChange }, fieldState: { error } }) => {
+            return (
+              <MuiChipsInput
+                label={property.name}
+                value={value}
+                error={!!error}
+                helperText={error?.message}
+                fullWidth
+                onChange={onChange}
+              />
+            );
+          }}
+          name={property.id}
+        />
+      );
+  }
 }

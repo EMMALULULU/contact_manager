@@ -1,0 +1,73 @@
+import { ContactProperty } from '@/components/types';
+export const contactProperties: ContactProperty[] = [
+  {
+    name: 'First Name',
+    type: 'singleLineString',
+    id: 'firstName',
+    isRequired: true,
+    isSearchable: true,
+  },
+  {
+    name: 'Last Name',
+    type: 'singleLineString',
+    id: 'lastName',
+    isRequired: true,
+    isSearchable: true,
+  },
+  {
+    name: 'Phone',
+    type: 'phoneNumber',
+    id: 'phone',
+    isRequired: true,
+    isSearchable: true,
+  },
+  {
+    name: 'Address',
+    type: 'singleLineString',
+    id: 'address',
+    isRequired: true,
+    isSearchable: false,
+  },
+  {
+    name: 'Email',
+    type: 'email',
+    id: 'email',
+    isRequired: false,
+    isSearchable: true,
+  },
+  {
+    name: 'Categories',
+    type: 'singleLineString',
+    id: 'categories',
+    isRequired: true,
+    isSearchable: true,
+  },
+  {
+    name: 'Notes',
+    type: 'multiLineString',
+    id: 'notes',
+    isRequired: false,
+    isSearchable: true,
+  },
+  {
+    name: 'Organisation Name',
+    type: 'singleLineString',
+    id: 'organisationName',
+    isRequired: false,
+    isSearchable: false,
+  },
+  {
+    name: 'WebSite Url',
+    type: 'url',
+    id: 'website',
+    isRequired: false,
+    isSearchable: true,
+  },
+  {
+    name: 'Tags',
+    type: 'tag',
+    id: 'tags',
+    isRequired: false,
+    isSearchable: false,
+  },
+];

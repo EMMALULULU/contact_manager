@@ -2,14 +2,8 @@ import { useMemo } from 'react';
 
 import { Stack, Typography } from '@mui/material';
 
-// Components
 import ContactCard from '@/components/ContactCard';
-
 import SearchBar from '@/components/SearchBar';
-
-import UploadIcon from '@mui/icons-material/Upload';
-
-import Button from '@mui/material/Button';
 
 import { useStore } from '@/store';
 import TagSelector from './components/TagSelector';
@@ -17,6 +11,7 @@ import CreateNewContact from './components/CreateNewContact';
 import { useSearchParams } from 'react-router-dom';
 import { contactProperties } from './constant/contactProperties';
 import DownloadContacts from './components/DownloadContacts';
+import UploadContacts from './components/UploadContacts';
 
 function App() {
   const [searchParams] = useSearchParams();
@@ -84,9 +79,7 @@ function App() {
           Contact Manager
         </Typography>
         <Stack direction="row" spacing={1}>
-          <Button variant="outlined">
-            Upload <UploadIcon />
-          </Button>
+          <UploadContacts />
           <CreateNewContact />
         </Stack>
       </Stack>

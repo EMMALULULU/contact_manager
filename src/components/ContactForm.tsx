@@ -1,6 +1,14 @@
 import { Controller, FormProvider, useForm } from 'react-hook-form';
 import { v4 as uuid } from 'uuid';
-import { Box, Paper, TextField, Button, Stack } from '@mui/material';
+import {
+  Box,
+  Paper,
+  TextField,
+  Button,
+  Stack,
+  FormHelperText,
+  FormControl,
+} from '@mui/material';
 import { MuiChipsInput } from 'mui-chips-input';
 import { ContactFormData, generateContactFormSchema } from '@/schema/Contact';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -9,11 +17,12 @@ import { Contact, ContactProperty } from './types';
 import { contactProperties } from '@/constant/contactProperties';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useStore } from '@/store';
+import PhoneInputComponent from './PhoneInput';
 
 const initialContact = {
   firstName: '',
   lastName: '',
-  phone: 10000000,
+  phone: '',
   emails: '',
   address: '',
   categories: '',
@@ -128,19 +137,14 @@ function getContactPropertyInput(property: ContactProperty) {
           key={property.id}
           render={({ field: { value, onChange }, fieldState: { error } }) => {
             return (
-              // TODO: phone number input
-              <TextField
-                multiline
-                value={value}
-                name={property.name}
-                label={property.name}
-                variant="outlined"
-                onChange={onChange}
-                error={!!error}
-                helperText={error?.message}
-                sx={{ my: 1 }}
-                fullWidth
-              />
+              <FormControl error={!!error} fullWidth>
+                <PhoneInputComponent
+                  value={value}
+                  onChange={onChange}
+                  error={!!error}
+                />
+                {!!error && <FormHelperText>{error?.message}</FormHelperText>}
+              </FormControl>
             );
           }}
           name={property.id}

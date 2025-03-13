@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 
-import { Stack, Typography } from '@mui/material';
+import { Box, Stack, Typography } from '@mui/material';
 
 import ContactCard from '@/components/ContactCard';
 import SearchBar from '@/components/SearchBar';
@@ -93,7 +93,18 @@ function App() {
           <DownloadContacts selectedContacts={selectedContacts} />
         )}
         {displayedContacts.length ? (
-          <Stack spacing={2}>
+          <Box
+            sx={{
+              display: 'grid',
+              gap: 4,
+              gridTemplateColumns: {
+                xs: 'repeat(1, 1fr)',
+                sm: 'repeat(2, 1fr)',
+                md: 'repeat(3, 1fr)',
+                lg: 'repeat(4, 1fr)',
+              },
+            }}
+          >
             {displayedContacts.map((contact) => (
               <ContactCard
                 key={contact.id}
@@ -101,7 +112,7 @@ function App() {
                 isSelected={selectedContacts.includes(contact)}
               />
             ))}
-          </Stack>
+          </Box>
         ) : (
           <Stack
             sx={{

@@ -1,23 +1,23 @@
 import { useMemo } from 'react';
-
-import { Box, Stack, Typography } from '@mui/material';
-
+import { Box, IconButton, Stack, Typography } from '@mui/material';
 import ContactCard from '@/components/ContactCard';
 import SearchBar from '@/components/SearchBar';
-
 import { useStore } from '@/store';
 import TagSelector from './components/TagSelector';
 import CreateNewContact from './components/CreateNewContact';
 import { useSearchParams } from 'react-router-dom';
 import { contactProperties } from './constant/contactProperties';
-import DownloadContacts from './components/DownloadContacts';
 import UploadContacts from './components/UploadContacts';
+import CloseIcon from '@mui/icons-material/Close';
+import DownloadContacts from './components/DownloadContacts';
 
 function App() {
   const [searchParams] = useSearchParams();
   const query = searchParams.get('query');
   const tags = searchParams.get('tags');
-  const { contacts, selectedContacts } = useStore((state) => state);
+  const { contacts, selectedContacts, setSelectedContacts } = useStore(
+    (state) => state
+  );
 
   const tagOptions = useMemo(() => {
     const flattened = contacts.map((contact) => contact.tags).flat();
@@ -89,8 +89,22 @@ function App() {
           <SearchBar sx={{ width: '360px', height: '60px' }} />
           <TagSelector options={tagOptions} />
         </Stack>
+
         {selectedContacts.length > 0 && (
-          <DownloadContacts selectedContacts={selectedContacts} />
+          <Stack direction="row" spacing={2} alignItems="center">
+            <Typography variant="body1">
+              {selectedContacts.length} contacts selected
+            </Typography>
+            <IconButton
+              onClick={() => {
+                setSelectedContacts([]);
+              }}
+            >
+              <CloseIcon />
+            </IconButton>
+
+            <DownloadContacts selectedContacts={selectedContacts} />
+          </Stack>
         )}
         {displayedContacts.length ? (
           <Box
@@ -105,13 +119,9 @@ function App() {
               },
             }}
           >
-            {displayedContacts.map((contact) => (
-              <ContactCard
-                key={contact.id}
-                contact={contact}
-                isSelected={selectedContacts.includes(contact)}
-              />
-            ))}
+            {displayedContacts.map((contact) => {
+              return <ContactCard key={contact.id} contact={contact} />;
+            })}
           </Box>
         ) : (
           <Stack

@@ -17,6 +17,7 @@ export type ContactProperty = {
   id: string;
   isRequired:boolean
   isSearchable: boolean;
+  isCustomizedField?: boolean;
 };
 
 export type Contact = ContactFormData & {

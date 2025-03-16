@@ -11,13 +11,13 @@ import {
 } from '@mui/material';
 import { MuiChipsInput } from 'mui-chips-input';
 import { ContactFormData, generateContactFormSchema } from '@/schema/Contact';
-import DeleteIcon from '@mui/icons-material/Delete';
 
 import { Contact, ContactProperty } from './types';
 import { contactProperties } from '@/constant/contactProperties';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useStore } from '@/store';
+
 import PhoneInputComponent from './PhoneInput';
+import { useStore } from '@/store';
 
 const initialContact = {
   firstName: '',
@@ -42,8 +42,7 @@ export default function ContactForm({
     defaultValues: contact ?? initialContact,
     resolver: zodResolver(generateContactFormSchema(contactProperties)),
   });
-  const { deleteContact } = useStore((state) => state);
-
+  const { setSelectedContacts } = useStore((state) => state);
   return (
     <Paper elevation={3}>
       <FormProvider {...methods}>
@@ -58,22 +57,14 @@ export default function ContactForm({
             sx={{ my: 3, width: '100%' }}
             spacing={2}
           >
-            {contact?.id && (
-              <Button
-                variant="outlined"
-                onClick={() => deleteContact(contact?.id ?? '')}
-              >
-                Delete
-                <DeleteIcon />
-              </Button>
-            )}
             <Button
               variant="contained"
               onClick={methods.handleSubmit((data) => {
                 onSubmit?.({ ...data, id: contact?.id ?? uuid() });
+                setSelectedContacts([]);
               })}
             >
-              Submit
+              {contact?.id ? 'Update' : 'Submit'}
             </Button>
           </Stack>
         </Box>
@@ -133,22 +124,29 @@ function getContactPropertyInput(property: ContactProperty) {
       );
     case 'phoneNumber':
       return (
-        <Controller
-          key={property.id}
-          render={({ field: { value, onChange }, fieldState: { error } }) => {
-            return (
-              <FormControl error={!!error} fullWidth>
-                <PhoneInputComponent
-                  value={value}
-                  onChange={onChange}
-                  error={!!error}
-                />
-                {!!error && <FormHelperText>{error?.message}</FormHelperText>}
-              </FormControl>
-            );
+        <Stack
+          sx={{
+            display: 'block',
+            py: '6px',
           }}
-          name={property.id}
-        />
+        >
+          <Controller
+            key={property.id}
+            render={({ field: { value, onChange }, fieldState: { error } }) => {
+              return (
+                <FormControl error={!!error} fullWidth>
+                  <PhoneInputComponent
+                    value={value}
+                    onChange={onChange}
+                    error={!!error}
+                  />
+                  {!!error && <FormHelperText>{error?.message}</FormHelperText>}
+                </FormControl>
+              );
+            }}
+            name={property.id}
+          />
+        </Stack>
       );
     case 'tag':
       return (

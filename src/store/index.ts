@@ -21,17 +21,17 @@ const getContact = () => {
   const contactStr = localStorage.getItem('contacts');
   if (contactStr) {
     const savedRecords: Contact[] = JSON.parse(contactStr);
+    const validRecords = Array.isArray(savedRecords)
+      ? savedRecords.filter((record) => {
+          return (
+            generateContactFormSchema(contactProperties).safeParse(record)
+              .success === true
+          );
+        })
+      : [];
     console.log('contactStr', savedRecords);
-    const isValid =
-      Array.isArray(savedRecords) &&
-      savedRecords.every(
-        (record) =>
-          generateContactFormSchema(contactProperties).safeParse(record)
-            .success === true
-      );
-    if (isValid) {
-      return savedRecords;
-    }
+
+    return validRecords;
   }
   return [];
 };
@@ -50,6 +50,9 @@ export const useStore = create<State & Actions>()(
       set((state) => {
         state.contacts = state.contacts.filter((contact) => contact.id !== id);
         localStorage.setItem('contacts', JSON.stringify(state.contacts));
+        state.selectedContacts = state.selectedContacts.filter(
+          (contact) => contact.id !== id
+        );
       }),
     updateContact: (contact) =>
       set((state) => {

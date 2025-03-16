@@ -22,7 +22,13 @@ export default function PhoneInputComponent({
         width: '100%',
         height: '54px',
         borderRadius: '6px',
+        
       }}
+      inputProps={{
+        label: 'Phone Number',
+        name:"phone"
+      }}
+      specialLabel='Phone Number'
     />
   );
 }

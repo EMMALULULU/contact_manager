@@ -1,5 +1,8 @@
-import { Button, Stack, Typography } from '@mui/material';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { contactProperties } from '@/constant/contactProperties';
+import { Button } from '@mui/material';
 import vCardsJS from 'vcards-js';
+
 export default function DownloadContacts({
   selectedContacts,
 }: {
@@ -8,21 +11,38 @@ export default function DownloadContacts({
   const handleContactsDownload = () => {
     selectedContacts.forEach((contact) => {
       const vCard = vCardsJS();
+      const customizedFields: { key: string; value: string }[] = [];
       Object.keys(contact).forEach((propertyId) => {
         const propertyValue = contact[propertyId];
         if (propertyId === 'id') {
           vCard.uid = propertyValue;
         }
-        if (Array.isArray(propertyValue)) {
-          (vCard as any)[propertyId] = propertyValue.join(',');
+        const value = Array.isArray(propertyValue)
+          ? propertyValue.join(',')
+          : propertyValue;
+
+        const isCustomizedField = contactProperties.find(
+          (property) => property.id === propertyId
+        )?.isCustomizedField;
+        if (isCustomizedField) {
+          customizedFields.push({ key: propertyId, value });
         } else {
-          (vCard as any)[propertyId] = propertyValue;
+          (vCard as any)[propertyId] = value;
         }
       });
-      const vCardString = vCard.getFormattedString();
+
+      // add customized fields to the vCard
+      const lines = vCard.getFormattedString().split('\n');
+      const customFields = customizedFields.map((field) => {
+        return `X-${field.key}: ${field.value}`;
+      });
+      lines.splice(-3, 0, ...customFields);
+      const vCardString = lines.join('\n');
+      console.log('vCardString', vCardString);
       const blob = new Blob([vCardString], { type: 'text/vcard' });
+      console.log('blob', blob, vCardString, vCard);
       const url = window.URL.createObjectURL(blob);
-      // Create a temporary link element to trigger download
+      //  trigger download
       const link = document.createElement('a');
       link.href = url;
       link.download =
@@ -30,20 +50,20 @@ export default function DownloadContacts({
       document.body.appendChild(link);
       link.click();
 
-      // Clean up
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
     });
   };
 
   return (
-    <Stack direction="row" spacing={2} alignItems="center">
-      <Typography variant="body1">
-        {selectedContacts.length} contacts selected
-      </Typography>
-      <Button variant="contained" onClick={handleContactsDownload}>
-        Download
-      </Button>
-    </Stack>
+    <Button
+      variant="contained"
+      onClick={handleContactsDownload}
+      sx={{
+        width: 'max-content',
+      }}
+    >
+      Download
+    </Button>
   );
 }

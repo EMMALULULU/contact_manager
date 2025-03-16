@@ -23,10 +23,8 @@ import { Contact } from './types';
 
 export default function ContactCard({
   contact,
-  isSelected,
 }: {
   contact: Contact;
-  isSelected: boolean;
 }) {
   const {
     setSelectedContacts,
@@ -35,7 +33,8 @@ export default function ContactCard({
     updateContact,
   } = useStore((state) => state);
   const [open, setOpen] = useState(false);
-  console.log(contact);
+  const isSelected = selectedContacts.includes(contact);
+  console.log('isSelected', isSelected);
   return (
     <>
       <Card sx={{ minWidth: 275 }}>
@@ -46,6 +45,7 @@ export default function ContactCard({
           sx={{
             padding: '24px',
             cursor: 'pointer',
+            height:'200px'
           }}
         >
           <Stack spacing={2}>
@@ -71,7 +71,7 @@ export default function ContactCard({
           <Box display="flex" flexDirection="row" alignItems="center">
             <Checkbox
               size="small"
-              value={isSelected}
+              checked={isSelected}
               onChange={(e) => {
                 if (e.target.checked) {
                   setSelectedContacts([...selectedContacts, contact]);
@@ -83,13 +83,15 @@ export default function ContactCard({
               }}
             />
 
-            <IconButton
-              aria-label="delete"
-              onClick={() => deleteContact(contact.id)}
-              size="small"
-            >
-              <DeleteIcon />
-            </IconButton>
+            {!isSelected && (
+              <IconButton
+                aria-label="delete"
+                onClick={() => deleteContact(contact.id)}
+                size="small"
+              >
+                <DeleteIcon />
+              </IconButton>
+            )}
           </Box>
         </CardActions>
       </Card>

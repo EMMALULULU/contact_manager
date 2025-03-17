@@ -25,7 +25,7 @@ export default function UploadContacts() {
   const [open, setOpen] = useState(false);
   const [uploadContactsStatus, setUploadContactsStatus] =
     useState<ContactWithUploadStatus[]>();
-  const { contacts, addContact, updateContact } = useStore();
+  const { contacts, addContact, updateContact,setSelectedContacts } = useStore();
   const handleFileSelect = () => {
     fileInputRef.current?.click();
   };
@@ -74,6 +74,7 @@ export default function UploadContacts() {
       }
     });
     setOpen(false);
+    setSelectedContacts([]);
   };
 
   console.log('uploadContactsStatus', uploadContactsStatus);

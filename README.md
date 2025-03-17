@@ -1,7 +1,7 @@
 https://contact-manager-indol-gamma.vercel.app/
 
 
-if you would like to run the project on your local machine
+
 Prerequisites
 -------------
 

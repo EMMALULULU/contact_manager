@@ -45,7 +45,7 @@ export default function ContactCard({ contact }: { contact: Contact }) {
           }}
         >
           <Stack spacing={2}>
-            <Stack direction="row" spacing={4} alignItems="center">
+            <Stack direction="row" spacing={4} alignItems="flex-start">
               <Avatar />
               <Stack spacing={0.5}>
                 <Typography variant="subtitle1">

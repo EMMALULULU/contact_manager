@@ -14,7 +14,7 @@ import {
 import { useStore } from '@/store';
 import { Contact } from './types';
 
-import { checkUploadContactStatus, parseVCardToContact } from './utils';
+import { checkUploadContactStatus, formatContact, parseVCardToContact } from './utils';
 type ContactWithUploadStatus = {
   status: 'add' | 'update' | 'skip';
   contact: Contact;
@@ -34,14 +34,17 @@ export default function UploadContacts() {
     const processedFiles = await Promise.all(
       Array.from(files).map(async (file) => {
         const text = await file.text();
-        const contact = parseVCardToContact(text);
+    
+        const parsedContact = parseVCardToContact(text);
+        const formattedContact = formatContact(parsedContact);
 
         return {
-          contact,
-          status: checkUploadContactStatus(contacts, contact),
+          contact : formattedContact,
+          status: checkUploadContactStatus(contacts, formattedContact),
         };
       })
     );
+    console.log('processedFiles', processedFiles);
     const uniqueById = new Map<string, ContactWithUploadStatus>();
     processedFiles.forEach((item) => {
       if (item.contact.id) {

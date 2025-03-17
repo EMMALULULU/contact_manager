@@ -5,7 +5,7 @@ https://contact-manager-indol-gamma.vercel.app/
 Prerequisites
 -------------
 
-To run this project, please ensure the following are installed:
+To run this project on your local machine, please ensure the following are installed:
 
 -   **Node.js**: Version 18.x or higher (available at [nodejs.org](https://nodejs.org/)).
 -   **npm**: Included with Node.js; update it with npm install -g npm if needed.

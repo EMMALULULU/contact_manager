@@ -1,3 +1,26 @@
+Prerequisites
+-------------
+
+Before starting, ensure you have the following installed on your system:
+
+-   **Node.js**: Version 18.x or higher (recommended). Download from [nodejs.org](https://nodejs.org/).
+-   **npm**: Comes with Node.js, but ensure it's updated (npm install -g npm).
+-   A code editor like [Visual Studio Code](https://code.visualstudio.com/) (optional but recommended).
+-   A terminal (e.g., Command Prompt, PowerShell, or Bash).
+-   
+### 1\. Clone the repository
+Clone this repository to your local machine.
+
+### 2\. Install Dependencies
+npm install
+
+### 2\. Start the Development Server
+npm run dev
+Open your browser and navigate to the provided URL (http://localhost:3000)
+
+
+
+
 # React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.

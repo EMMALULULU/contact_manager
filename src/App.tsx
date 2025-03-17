@@ -26,6 +26,7 @@ function App() {
 
   const displayedContacts = useMemo(() => {
     let filteredContacts = contacts;
+
     if (query) {
       filteredContacts = Object.values(filteredContacts).filter((contact) => {
         const isMatchSearchTerm = Object.entries(contact).find(
@@ -33,7 +34,8 @@ function App() {
             const property = contactProperties.find(
               (property) => property.id === key
             );
-            if (property?.isSearchable) {
+
+            if (property?.isSearchable && value != undefined) {
               return Array.isArray(value)
                 ? value.some((v) =>
                     v.toString().toLowerCase().includes(query.toLowerCase())
@@ -48,7 +50,7 @@ function App() {
     }
     if (tags) {
       filteredContacts = filteredContacts.filter((contact) => {
-        return contact.tags.some((tag: string) => tags.includes(tag));
+        return contact.tags?.some((tag: string) => tags.includes(tag));
       });
     }
     return filteredContacts;

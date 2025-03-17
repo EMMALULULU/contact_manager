@@ -21,11 +21,7 @@ import ContactForm from './ContactForm';
 import CloseIcon from '@mui/icons-material/Close';
 import { Contact } from './types';
 
-export default function ContactCard({
-  contact,
-}: {
-  contact: Contact;
-}) {
+export default function ContactCard({ contact }: { contact: Contact }) {
   const {
     setSelectedContacts,
     selectedContacts,
@@ -34,7 +30,7 @@ export default function ContactCard({
   } = useStore((state) => state);
   const [open, setOpen] = useState(false);
   const isSelected = selectedContacts.includes(contact);
-  
+
   return (
     <>
       <Card sx={{ minWidth: 275 }}>
@@ -45,7 +41,7 @@ export default function ContactCard({
           sx={{
             padding: '24px',
             cursor: 'pointer',
-            height:'200px'
+            height: '200px',
           }}
         >
           <Stack spacing={2}>
@@ -62,7 +58,7 @@ export default function ContactCard({
               </Stack>
             </Stack>
             <Box>
-              {contact.tags.map((tag: string) => (
+              {contact.tags?.map((tag: string) => (
                 <Chip sx={{ m: 0.25 }} key={tag} label={tag} />
               ))}
             </Box>

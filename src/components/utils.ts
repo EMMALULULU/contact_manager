@@ -1,10 +1,11 @@
 import { contactProperties } from '@/constant/contactProperties';
 import { Contact } from './types';
 import _lodash from 'lodash';
+import { v4 as uuidv4 } from 'uuid';
 
 export function parseVCardToContact(vCardText: string): Contact {
   const lines = vCardText.split('\n').filter((line) => line.trim());
-  const result: Contact = { id: '' };
+  const result: Contact = { id: uuidv4() };
 
   lines.forEach((line) => {
     if (line.length === 0) return;
@@ -47,7 +48,8 @@ export function parseVCardToContact(vCardText: string): Contact {
     } else if (key === 'ORG') {
       result.organization = value.trim();
     } else if (key === 'URL') {
-      result.url = value.trim();
+      const urlStart = line.indexOf('http');
+      result.url = urlStart ? line.substring(urlStart) : '';
     } else if (key === 'NOTE') {
       result.note = value.trim();
     }
@@ -87,4 +89,37 @@ export function checkUploadContactStatus(
     return isUpdate ? 'update' : 'skip';
   }
   return 'skip';
+}
+
+export function getEmptyContact(): Contact {
+  return contactProperties.reduce((acc, property) => {
+    if (property.type === 'tag') {
+      acc[property.id] = [];
+    } else {
+      acc[property.id] = '';
+    }
+    return acc;
+  }, {} as Contact);
+}
+
+export function formatContact(contact: Contact): Contact {
+  const formattedContact = contactProperties.reduce(
+    (acc, property) => {
+      if (property.type === 'tag') {
+        acc[property.id] =
+          Array.isArray(contact[property.id]) && contact[property.id].length > 0
+            ? contact[property.id]
+            : [];
+      } else {
+        acc[property.id] = contact[property.id] ? contact[property.id] : '';
+      }
+
+      return acc;
+    },
+    {
+      id: contact.id,
+    } as Contact
+  );
+
+  return formattedContact;
 }

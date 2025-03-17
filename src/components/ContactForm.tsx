@@ -18,19 +18,10 @@ import { zodResolver } from '@hookform/resolvers/zod';
 
 import PhoneInputComponent from './PhoneInput';
 import { useStore } from '@/store';
+import { getEmptyContact } from './utils';
 
-const initialContact = {
-  firstName: '',
-  lastName: '',
-  phone: '',
-  emails: '',
-  address: '',
-  categories: '',
-  organizationName: '',
-  websiteURL: '',
-  notes: '',
-  tags: [],
-};
+const initialContact = getEmptyContact();
+
 export default function ContactForm({
   onSubmit,
   contact,
@@ -80,7 +71,7 @@ function getContactPropertyInput(property: ContactProperty) {
     case 'url':
       return (
         <Controller
-          key={property.id}
+          key={property.name + Math.random()}
           render={({ field: { value, onChange }, fieldState: { error } }) => {
             return (
               <TextField
@@ -101,7 +92,7 @@ function getContactPropertyInput(property: ContactProperty) {
     case 'multiLineString':
       return (
         <Controller
-          key={property.id}
+          key={property.name + Math.random()}
           render={({ field: { value, onChange }, fieldState: { error } }) => {
             return (
               <TextField
@@ -131,7 +122,7 @@ function getContactPropertyInput(property: ContactProperty) {
           }}
         >
           <Controller
-            key={property.id}
+            key={property.name + Math.random()}
             render={({ field: { value, onChange }, fieldState: { error } }) => {
               return (
                 <FormControl error={!!error} fullWidth>
@@ -139,6 +130,7 @@ function getContactPropertyInput(property: ContactProperty) {
                     value={value}
                     onChange={onChange}
                     error={!!error}
+                    label={property.name}
                   />
                   {!!error && <FormHelperText>{error?.message}</FormHelperText>}
                 </FormControl>
@@ -151,7 +143,7 @@ function getContactPropertyInput(property: ContactProperty) {
     case 'tag':
       return (
         <Controller
-          key={property.id}
+          key={property.name + Math.random()}
           render={({ field: { value, onChange }, fieldState: { error } }) => {
             return (
               <MuiChipsInput
@@ -160,7 +152,10 @@ function getContactPropertyInput(property: ContactProperty) {
                 error={!!error}
                 helperText={error?.message}
                 fullWidth
-                onChange={onChange}
+                onChange={(value) => {
+                  const updated = new Set(value);
+                  onChange([...updated]);
+                }}
               />
             );
           }}

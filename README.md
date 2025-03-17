@@ -1,22 +1,28 @@
 Prerequisites
 -------------
 
-Before starting, ensure you have the following installed on your system:
+To run this project, please ensure the following are installed:
 
--   **Node.js**: Version 18.x or higher (recommended). Download from [nodejs.org](https://nodejs.org/).
--   **npm**: Comes with Node.js, but ensure it's updated (npm install -g npm).
--   A code editor like [Visual Studio Code](https://code.visualstudio.com/) (optional but recommended).
+-   **Node.js**: Version 18.x or higher (available at [nodejs.org](https://nodejs.org/)).
+-   **npm**: Included with Node.js; update it with npm install -g npm if needed.
 -   A terminal (e.g., Command Prompt, PowerShell, or Bash).
--   
-### 1\. Clone the repository
-Clone this repository to your local machine.
+
+  
+### 1\. Navigate to the Project Directory
+After downloading or cloning the project, open a terminal and navigate to the project folder 
 
 ### 2\. Install Dependencies
+Install all required dependencies
+```js
 npm install
+```
 
-### 2\. Start the Development Server
+### 3\. Start the Development Server
+```js
 npm run dev
-Open your browser and navigate to the provided URL (http://localhost:3000)
+```
+Vite will start a local server at http://localhost:3000
+Open your browser and navigate to the provided URL 
 
 
 

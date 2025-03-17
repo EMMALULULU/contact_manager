@@ -39,9 +39,11 @@ function getContactPropertySchema(property: ContactProperty) {
             })
             .optional();
     case 'phoneNumber':
-      return property.isRequired
-        ? z.string().transform((value, ctx) => validatePhoneNumber(value, ctx))
-        : z.string().trim().optional();
+      return z
+        .string()
+        .transform((value, ctx) =>
+          validatePhoneNumber(value, ctx, property.isRequired)
+        );
     case 'singleLineString':
       return property.isRequired
         ? z.string().min(1, {
@@ -80,18 +82,36 @@ export function generateContactFormSchema(properties: ContactProperty[]) {
   return z.object(shape);
 }
 
-function validatePhoneNumber(value: string, ctx: z.RefinementCtx) {
+function validatePhoneNumber(
+  value: string,
+  ctx: z.RefinementCtx,
+  isRequired: boolean
+) {
   const phoneNumber = parsePhoneNumber(value, {
     defaultCountry: 'HK',
   });
 
-  if (!phoneNumber || !phoneNumber.isValid()) {
+  if ((!phoneNumber || !phoneNumber.isValid()) && isRequired) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
       message: 'Invalid phone number',
     });
     return z.NEVER;
+  } else if (!isRequired && !phoneNumber?.isValid()) {
+    const hasValue =
+      phoneNumber && value.length
+        ? value.length > (phoneNumber?.countryCallingCode.length ?? 0)
+        : false;
+
+    if (hasValue) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Invalid phone number',
+      });
+      return z.NEVER;
+    }
+    return '';
   }
 
-  return phoneNumber.formatInternational();
+  return phoneNumber?.formatInternational() || '';
 }
